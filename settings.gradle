@@ -1,0 +1,6 @@
+rootProject.name = 'tp03'
+
+['swing'].each {
+    include ":tp03-${it}"
+    project(":tp03-${it}").projectDir = file(it)
+}
