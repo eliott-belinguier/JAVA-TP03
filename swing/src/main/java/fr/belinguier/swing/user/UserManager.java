@@ -62,6 +62,12 @@ public class UserManager {
         });
     }
 
+    public static Task<Boolean> deleteUser(final long id) {
+        return Main.getDataBase().execute("DELETE FROM user WHERE id = ?", preparedStatement -> {
+            preparedStatement.setLong(1, id);
+        });
+    }
+
     public static Task<Boolean> deleteUser(final String name) {
         return Main.getDataBase().execute("DELETE FROM user WHERE name = ?", preparedStatement -> {
            preparedStatement.setString(1, name);

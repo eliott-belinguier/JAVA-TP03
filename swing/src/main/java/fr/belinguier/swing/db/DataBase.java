@@ -87,10 +87,12 @@ public class DataBase {
     }
 
     public Task<Void> executeSQL(final String sql) {
+        System.out.println(sql);
         return this.taskQueue.createTask(() -> {
-            final PreparedStatement preparedStatement = DataBase.this.getConnection().prepareStatement(sql);
+            final Statement statement = DataBase.this.getConnection().createStatement();
 
-            preparedStatement.execute();
+            statement.executeUpdate(sql);
+            statement.close();
             return null;
         });
     }

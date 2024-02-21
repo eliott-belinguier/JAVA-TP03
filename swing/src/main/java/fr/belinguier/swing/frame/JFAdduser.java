@@ -16,7 +16,8 @@ public class JFAdduser extends JFrame {
     private final CountDownLatch countDownLatch;
     private final JTextField idField;
     private final JTextField nameField;
-    private final JButton addBoutton;
+    private final JButton addButton;
+    private final JButton deleteButton;
 
     public JFAdduser(final CountDownLatch countDownLatch) {
         final JPanel panel = new JPanel();
@@ -26,17 +27,14 @@ public class JFAdduser extends JFrame {
         this.countDownLatch = countDownLatch;
         this.idField = new JTextField();
         this.nameField = new JTextField();
-        this.addBoutton = new JButton("Ajouter");
-        this.addBoutton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent actionEvent) {
-                final User user;
-
-                try {
-                    user = UserManager.addUser(Long.parseLong(JFAdduser.this.idField.getText()), JFAdduser.this.nameField.getText()).complete();
-                } catch (Exception ignored) {}
-            }
-        });
+        this.addButton = new JButton("Ajouter");
+        this.deleteButton = new JButton("Supprimer");
+        this.addButton.addActionListener(actionEvent -> UserManager.addUser(Long.parseLong(JFAdduser.this.idField.getText()), JFAdduser.this.nameField.getText()).queue(user -> {
+            JOptionPane.showMessageDialog(JFAdduser.this, "User " + user.name  + " added.", "Add user", JOptionPane.INFORMATION_MESSAGE);
+        }, this::displayError));
+        this.deleteButton.addActionListener(actionEvent -> UserManager.deleteUser(Long.parseLong(JFAdduser.this.idField.getText())).queue(isDelete -> {
+            JOptionPane.showMessageDialog(JFAdduser.this, "User removed.", "Add user", JOptionPane.INFORMATION_MESSAGE);
+        }, this::displayError));
         panel.setLayout(new GridLayout(3, 2));
         setTitle("Ajout d'un utilisateur");
         setSize(300, 200);
@@ -45,7 +43,8 @@ public class JFAdduser extends JFrame {
         panel.add(this.idField);
         panel.add(nameLabel);
         panel.add(this.nameField);
-        panel.add(this.addBoutton);
+        panel.add(this.addButton);
+        panel.add(this.deleteButton);
 
         add(panel);
         addWindowListener(new WindowAdapter() {
@@ -55,6 +54,11 @@ public class JFAdduser extends JFrame {
                 JFAdduser.this.countDownLatch.countDown();
             }
         });
+    }
+
+
+    private void displayError(final Throwable throwable) {
+        JOptionPane.showMessageDialog(this, throwable.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
     }
 
 }

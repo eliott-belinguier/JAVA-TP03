@@ -27,7 +27,7 @@ public class Main {
             return;
         }
         jfAdduser = new JFAdduser(countDownLatch);
-        jfAdduser.show();
+        jfAdduser.setVisible(true);
         try {
             countDownLatch.await();
         } catch (final InterruptedException ignored) {}
